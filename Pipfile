@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+bokeh = "~=2.2.3"
+python-dotenv = "~=0.15.0"
+httpx = "~=0.13.3"
+pyracing = "~=0.1.0"
+logdna = "~=1.5.3"
+prettytable = "~=2.0.0"
+imgkit = "~=1.0.2"
+selenium = "~=3.141.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -1,6 +1,11 @@
 import discord
 from discord.ext import commands
 from iracing_cog import Iracing
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
 
 description = "iRacing Bot to compare yourself to your friends and keep up to date on weekly combos"
 
@@ -24,4 +29,4 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
-bot.run('NzA2NzMwNjYwNzg1NTUzNTE4.Xq-gNw.3bh26MNxmyiNsqa1k74SnSGXoJ4', bot=True, reconnect=True)
+bot.run(os.getenv('BOT_TOKEN'), bot=True, reconnect=True)
