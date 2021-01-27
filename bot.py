@@ -6,6 +6,7 @@ import sys
 import traceback
 import logging
 from logdna import LogDNAHandler
+from tortoise import Tortoise
 
 dotenv.load_dotenv()
 logdna_key = os.getenv("LOGDNA_INGESTION_KEY")
@@ -61,6 +62,7 @@ async def on_message(message):
 
 @bot.event
 async def on_command_error(ctx, exception):
+    await Tortoise.close_connections()
     log.warning(f'command failed: {ctx.message} with exception: {exception}')
     await ctx.send('Whoops! Looks like something went wrong. '
                    'If the id you set with `!saveid` is invalid it can cause failures.'
