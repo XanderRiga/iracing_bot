@@ -12,6 +12,7 @@ logdna = "~=1.5.3"
 prettytable = "~=2.0.0"
 imgkit = "~=1.0.2"
 selenium = "~=3.141.0"
+tortoise-orm = "*"
 
 [dev-packages]
 
