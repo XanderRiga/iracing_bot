@@ -57,7 +57,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    message_name = message.content[1:]
+    message_name = message.content[1:].split(' ')[0]  # ignore the ! and get the first word
     command_names = list(map(lambda c: c.name, list(bot.commands)))
     if message_name not in command_names:
         return
