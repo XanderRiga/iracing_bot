@@ -3,6 +3,8 @@ This is a cog for discord.py that allows users to view and compare their iRacing
 
 This uses [My iRacing Cog](https://github.com/XanderRiga/iracing_cog) under the hood
 
+## Like this bot? You can buy me a beer [here](https://www.buymeacoffee.com/xanderriga)
+
 ## You can always use `!help` to see what the bot can do
 
 
