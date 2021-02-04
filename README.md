@@ -102,6 +102,11 @@ If the user has not saved their ID, they must provide an iRacing Client ID.
 - Once you have cloned the bot, from inside the root folder of the bot, run `pipenv install`
 - You will need to do a special installation for `wkhtmltopdf` which is part of what is used to generate images. 
   Follow the instructions from step 2 [here](https://pypi.org/project/imgkit/) for your platform.
+- You will also need to install the chromium chromedriver:
+
+Linux: `sudo apt install chromium-chromedriver`
+
+Mac: `brew install chromedriver -cask`
 - You will need a `.env` file in the root of this project that looks like this:
 ```
 IRACING_USERNAME=your username here
