@@ -89,3 +89,38 @@ If the user has not saved their ID, they must provide an iRacing Client ID.
 This will give an overview of the yearly stats of the player with the given iRacing Client ID.
 If an iRacing Client ID is not provided, then it will use the saved ID for the user who called the command.
 If the user has not saved their ID, they must provide an iRacing Client ID.
+
+# Local Setup
+- Make sure you have [pipenv](https://pypi.org/project/pipenv/) installed wherever you plan to run the bot.
+- From the root folder of the bot you will need to clone [this repo](https://github.com/XanderRiga/iracing_cog) 
+  into the `iracing_cog` folder
+- From the root folder of the **cog**(note: not the bot, the cog), you will need to clone 
+  [this repo](https://github.com/Esterni/pyracing) into the pyracing folder.
+- Run `pipenv shell` and then pip install . from inside the root of the `pyracing` dir
+  
+  *Note* I am aware this setup is insane with 3 nested repos, and I am actively working to move away from this method.
+- Once you have cloned the bot, from inside the root folder of the bot, run `pipenv install`
+- You will need to do a special installation for `wkhtmltopdf` which is part of what is used to generate images. 
+  Follow the instructions from step 2 [here](https://pypi.org/project/imgkit/) for your platform.
+- You will need a `.env` file in the root of this project that looks like this:
+```
+IRACING_USERNAME=your username here
+IRACING_PASSWORD=your password here
+BOT_TOKEN=your bot's token from discord
+```
+This will allow the bot to actually hit the iracing servers using your login information.
+- From the root of the bot repo, run `pipenv shell` if you aren't already in the shell, and then `python bot.py`
+- You did it! The bot should be running locally now and once you invite it to your server, you can use it
+- If you want to keep the bot running 24/7, you should be able to get it running with [PM2](https://pm2.keymetrics.io/)
+
+## Common Gotchas
+- If the images seem to be failing, make sure you followed the instructions to install wkhtmltopdf correctly.
+- If there seems to be something strange happening, make sure you pull master for the bot, the cog, and pyracing. 
+  I know this setup is insane, and I intend to merge the bot and the cog eventually.
+- Make sure your iracing credentials are correct, and sometimes you may need to go to the member website and do a 
+  captcha if the bot seems stuck getting failures.
+- There will be a bunch of noisy log output. This is because I am using LogDNA for my bot in production and 
+  built it to use that, I will be removing this requirement as it causes a lot of noise if it isn't set up, 
+  but you don't have to worry about it. If by some chance you also use LogDNA, you can set the 
+  `LOG_LOCATION` and `LOGDNA_INGESTION_KEY` in the `.env` where the location is `dev` or `prod` or something like that, 
+  and it will link up to your LogDNA account.
