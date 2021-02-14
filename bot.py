@@ -68,10 +68,10 @@ async def on_message(message):
 @bot.event
 async def on_command_error(ctx, exception):
     traceback.print_exc()
-    await Tortoise.close_connections()
     log.warning(f'command failed: {ctx.message.content} with exception: {exception}')
     await ctx.send('Whoops! Looks like something went wrong. '
                    'If the id you set with `!saveid` is invalid it can cause failures. '
                    'Otherwise, use `!help` to learn about each command or wait and try again soon.')
+    await Tortoise.close_connections()
 
 bot.run(os.getenv('BOT_TOKEN'), bot=True, reconnect=True)
