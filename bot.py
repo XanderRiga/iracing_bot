@@ -7,6 +7,7 @@ import traceback
 import logging
 from logdna import LogDNAHandler
 from tortoise import Tortoise
+from iracing_cog.db_helpers import generate_schemas
 
 dotenv.load_dotenv()
 logdna_key = os.getenv("LOGDNA_INGESTION_KEY")
@@ -39,16 +40,14 @@ def get_prefix(bot, message):
 bot = commands.Bot(command_prefix=get_prefix, description=description, intents=intents)
 
 
-if __name__ == '__main__':
+@bot.event
+async def on_ready():
+    await generate_schemas()
     try:
         bot.load_extension('iracing_cog.iracing')
     except Exception as e:
         print(f'Failed to load iracing_cog.', file=sys.stderr)
         traceback.print_exc()
-
-
-@bot.event
-async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
 
 
@@ -72,6 +71,6 @@ async def on_command_error(ctx, exception):
     await ctx.send('Whoops! Looks like something went wrong. '
                    'If the id you set with `!saveid` is invalid it can cause failures. '
                    'Otherwise, use `!help` to learn about each command or wait and try again soon.')
-    await Tortoise.close_connections()
+
 
 bot.run(os.getenv('BOT_TOKEN'), bot=True, reconnect=True)
