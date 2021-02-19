@@ -69,8 +69,7 @@ async def on_command_error(ctx, exception):
     traceback.print_exc()
     log.warning(f'command failed: {ctx.message.content} with exception: {exception}')
     await ctx.send('Whoops! Looks like something went wrong. '
-                   'If the id you set with `!saveid` is invalid it can cause failures. '
-                   'Otherwise, use `!help` to learn about each command or wait and try again soon.')
+                   'Use `!help` to learn about each command or wait and try again soon.')
 
 
 bot.run(os.getenv('BOT_TOKEN'), bot=True, reconnect=True)
