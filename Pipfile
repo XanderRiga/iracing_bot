@@ -12,7 +12,8 @@ prettytable = "~=2.0.0"
 imgkit = "~=1.0.2"
 selenium = "~=3.141.0"
 tortoise-orm = "*"
-discord.py = "~=1.6.0"
+aerich = "*"
+discord = {py = "~=1.6.0"}
 
 [dev-packages]
 
