@@ -15,6 +15,7 @@ tortoise-orm = "*"
 aerich = "*"
 discord = {py = "~=1.6.0"}
 datadog = "*"
+setuptools = "~=51.0.0"
 
 [dev-packages]
 
