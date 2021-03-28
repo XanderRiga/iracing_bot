@@ -14,6 +14,7 @@ selenium = "~=3.141.0"
 tortoise-orm = "*"
 aerich = "*"
 discord = {py = "~=1.6.0"}
+datadog = "*"
 
 [dev-packages]
 
