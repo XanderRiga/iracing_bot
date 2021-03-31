@@ -1,6 +1,5 @@
 from ..html_builder import *
 from ..helpers import *
-import imgkit
 from bokeh.plotting import figure, output_file, save
 from bokeh.io import export_png
 from bokeh.palettes import Category20

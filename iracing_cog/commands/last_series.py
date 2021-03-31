@@ -1,6 +1,6 @@
 from ..storage import *
 from ..html_builder import *
-import imgkit
+from ..interactors.image_from_string import image_from_string
 
 
 class LastSeries:
@@ -24,7 +24,7 @@ class LastSeries:
             if last_series:
                 table_html_string = get_last_series_html_string(last_series, iracing_id)
                 filename = f'{guild_id}_{iracing_id}_last_series.jpg'
-                imgkit.from_string(table_html_string, filename)
+                image_from_string(table_html_string, filename)
                 await ctx.send(file=discord.File(filename))
                 cleanup_file(filename)
             else:

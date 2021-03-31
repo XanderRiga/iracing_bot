@@ -1,5 +1,5 @@
 from ..html_builder import *
-import imgkit
+from ..interactors.image_from_string import image_from_string
 from ..db_helpers import init_tortoise, Tortoise
 from ..models import Driver, Guild, Category
 import traceback
@@ -33,7 +33,7 @@ class LeaderboardDb:
             table_html_string = await self.get_leaderboard_html_string(drivers, ctx.guild, Category.from_name(category),
                                                                        is_yearly)
             filename = f'{ctx.guild.id}_leaderboard.jpg'
-            imgkit.from_string(table_html_string, filename)
+            image_from_string(table_html_string, filename)
             await ctx.send(file=discord.File(filename))
 
         cleanup_file(filename)

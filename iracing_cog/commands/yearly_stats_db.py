@@ -1,7 +1,5 @@
 from ..html_builder import *
-import imgkit
-from ..db_helpers import init_tortoise
-from tortoise import Tortoise
+from ..interactors.image_from_string import image_from_string
 from ..models import Stat, Driver, StatsType, Category
 
 
@@ -29,18 +27,16 @@ class YearlyStatsDb:
                         return
 
                 try:
-
                     driver = await Driver.get(iracing_id=iracing_id)
                     yearly_stats = await Stat.filter(driver=driver, stat_type=StatsType.yearly)
                 except:
-
                     yearly_stats = await self.build_stats(iracing_id)
 
                 if yearly_stats:
                     yearly_stats.sort(key=lambda x: x.year, reverse=True)
                     yearly_stats_html = get_yearly_stats_html_db(yearly_stats, iracing_id)
                     filename = f'{iracing_id}_yearly_stats.jpg'
-                    imgkit.from_string(yearly_stats_html, filename)
+                    image_from_string(yearly_stats_html, filename)
                     await ctx.send(file=discord.File(filename))
                     cleanup_file(filename)
                 else:

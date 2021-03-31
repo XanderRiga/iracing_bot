@@ -1,8 +1,7 @@
 from ..html_builder import *
 from ..helpers import cleanup_file
-import imgkit
-from ..db_helpers import init_tortoise, Tortoise
 from ..models import Series
+from ..interactors.image_from_string import image_from_string
 
 
 class AllSeriesDb:
@@ -24,6 +23,6 @@ class AllSeriesDb:
 
         for string in html_strings:
             filename = f'{ctx.guild.id}_series.jpg'
-            imgkit.from_string(string, filename)
+            image_from_string(string, filename)
             await ctx.send(file=discord.File(filename))
             cleanup_file(filename)
