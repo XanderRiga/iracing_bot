@@ -1,5 +1,5 @@
 from ..html_builder import *
-import imgkit
+from ..interactors.image_from_string import image_from_string
 import traceback
 from ..db_helpers import init_tortoise, Guild, Tortoise
 
@@ -30,13 +30,13 @@ class CurrentSeriesDb:
 
             if this_week_string:
                 this_week_filename = f'{ctx.guild.id}_this_week.jpg'
-                imgkit.from_string(this_week_string, this_week_filename)
+                image_from_string(this_week_string, this_week_filename)
                 await ctx.send(file=discord.File(this_week_filename))
                 cleanup_file(this_week_filename)
 
             if next_week_string:
                 next_week_filename = f'{ctx.guild.id}_next_week.jpg'
-                imgkit.from_string(next_week_string, next_week_filename)
+                image_from_string(next_week_string, next_week_filename)
                 await ctx.send(file=discord.File(next_week_filename))
                 cleanup_file(next_week_filename)
 

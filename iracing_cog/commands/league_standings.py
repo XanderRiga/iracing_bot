@@ -1,5 +1,5 @@
 from ..models import Guild
-import imgkit
+from ..interactors.image_from_string import image_from_string
 from ..html_builder import *
 
 
@@ -84,6 +84,6 @@ class LeagueStandings:
         final_table_string = css + charset() + header_html_string + "\n" + html_string
 
         filename = f'league_season_{season.iracing_id}_standings.jpg'
-        imgkit.from_string(final_table_string, filename)
+        image_from_string(final_table_string, filename)
         await ctx.send(file=discord.File(filename))
         cleanup_file(filename)

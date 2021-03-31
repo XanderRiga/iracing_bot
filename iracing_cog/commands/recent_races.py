@@ -1,6 +1,6 @@
 from ..html_builder import *
 from ..helpers import *
-import imgkit
+from ..interactors.image_from_string import image_from_string
 from ..db_helpers import Driver
 
 
@@ -29,7 +29,7 @@ class RecentRaces:
             if races_stats_list:
                 table_html_string = await recent_races_table_db_string(races_stats_list, iracing_id)
                 filename = f'{guild_id}_{iracing_id}_recent_races.jpg'
-                imgkit.from_string(table_html_string, filename)
+                image_from_string(table_html_string, filename)
                 await ctx.send(file=discord.File(filename))
                 cleanup_file(filename)
             else:

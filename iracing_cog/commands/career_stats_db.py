@@ -1,8 +1,6 @@
 from ..html_builder import *
-import imgkit
-from ..db_helpers import init_tortoise
-from tortoise import Tortoise
 from ..models import Stat, Driver, StatsType, Category
+from ..interactors.image_from_string import image_from_string
 
 
 class CareerStatsDb:
@@ -38,7 +36,7 @@ class CareerStatsDb:
                 if career_stats:
                     career_stats_html = get_career_stats_html_db(career_stats, iracing_id)
                     filename = f'{iracing_id}_career_stats.jpg'
-                    imgkit.from_string(career_stats_html, filename)
+                    image_from_string(career_stats_html, filename)
                     await ctx.send(file=discord.File(filename))
                     cleanup_file(filename)
                 else:
