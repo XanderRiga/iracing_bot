@@ -5,6 +5,7 @@ import os
 import copy
 from .models import Series
 from .db_helpers import init_tortoise
+from dateutil import relativedelta
 
 
 iracing_table_css = """#iracing_table {
@@ -208,13 +209,7 @@ def cleanup_file(file_name):
 
 
 def six_months_before(date):
-    month = date.month - 6
-    year = date.year
-    if month < 1:
-        month += 12
-        year = date.year - 1
-
-    return datetime(year, month, date.day)
+    return date - relativedelta.relativedelta(months=6)
 
 
 def peak_irating_value(iratings):
