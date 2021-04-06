@@ -27,7 +27,7 @@ async def generate_schemas():
 
 
 async def get_or_create_series(series):
-    series_model = await Series.get_or_create(
+    series_response = await Series.get_or_create(
         iracing_id=series.series_id,
         defaults={
             'name': series.series_name_short,
@@ -35,7 +35,16 @@ async def get_or_create_series(series):
         }
     )
 
-    return series_model[0]
+    series_model = series_response[0]
+
+    # We want to make sure we have the most up to date name for our series
+    await series_model.update_from_dict({
+        'name': series.series_name_short,
+        'category': Category(series.cat_id)
+    })
+    await series_model.save()
+
+    return series_model
 
 
 async def get_or_create_season(series):
