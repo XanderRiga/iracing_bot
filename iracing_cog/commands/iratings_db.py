@@ -23,7 +23,6 @@ class IratingsDb:
                 return
 
             try:
-
                 guild = await Guild.get(discord_id=str(ctx.guild.id))
             except:
                 await ctx.send('Looks like no one in this discord has data yet. '
@@ -51,20 +50,23 @@ class IratingsDb:
             irating_dicts = await get_irating_dicts(guild, category_model)
             for irating_dict in irating_dicts:
                 for user_id, iratings_list in irating_dict.items():
-                    member = ctx.guild.get_member(int(user_id))
-                    datetimes = []
-                    iratings = []
-                    for irating in iratings_list:
-                        datetimes.append(irating.datetime())
-                        iratings.append(irating.value)
+                    try:
+                        member = ctx.guild.get_member(int(user_id))
+                        datetimes = []
+                        iratings = []
+                        for irating in iratings_list:
+                            datetimes.append(irating.datetime())
+                            iratings.append(irating.value)
 
-                    p.line(
-                        datetimes,
-                        iratings,
-                        legend_label=member.display_name,
-                        line_width=2,
-                        color=next(colors)
-                    )
+                        p.line(
+                            datetimes,
+                            iratings,
+                            legend_label=member.display_name,
+                            line_width=2,
+                            color=next(colors)
+                        )
+                    except:
+                        continue
 
             filename = f'irating_graph_{ctx.guild.id}.png'
             export_png(p, filename=filename, webdriver=webdriver.Chrome(options=self.webdriver_options()))
