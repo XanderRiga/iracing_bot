@@ -113,6 +113,17 @@ class Driver(Base):
     async def iratings_by_category(self, category):
         return await self.iratings.filter(category=category)
 
+    async def iratings_by_year(self, category, year):
+        relevant_iratings = await self.iratings_by_category(category)
+        return list(filter(lambda x: x.datetime().year == year, relevant_iratings))
+
+    async def peak_irating_by_year(self, category, year):
+        try:
+            relevant_iratings = await self.iratings_by_year(category, year)
+            return await max(relevant_iratings, key=lambda irating: irating.value)
+        except:
+            return None
+
     async def peak_irating(self, category) -> Optional[Irating]:
         try:
             relevant_iratings = await self.iratings_by_category(category)

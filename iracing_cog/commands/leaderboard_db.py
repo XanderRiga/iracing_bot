@@ -3,6 +3,7 @@ from ..interactors.image_from_string import image_from_string
 from ..db_helpers import init_tortoise, Tortoise
 from ..models import Driver, Guild, Category
 import traceback
+from datetime import datetime
 
 
 class LeaderboardDb:
@@ -39,7 +40,6 @@ class LeaderboardDb:
         cleanup_file(filename)
 
     async def get_leaderboard_html_string(self, drivers, guild, category, yearly=False):
-
         type_string = 'Yearly' if yearly else 'Career'
         header_string = 'iRacing ' + category.friendly_name() + ' ' + \
                         type_string + ' Leaderboard'
@@ -58,17 +58,16 @@ class LeaderboardDb:
         for driver in sorted_drivers:
             try:
                 if yearly:
-
                     stat = await driver.current_year_stat(category)
                 else:
-
                     stat = await driver.career_stat(category)
 
+                if yearly:
+                    peak_ir = await driver.peak_irating_by_year(category, datetime.today().year)
+                else:
+                    peak_ir = await driver.peak_irating(category)
 
                 current_ir = await driver.current_irating(category)
-
-                peak_ir = await driver.peak_irating(category)
-
                 license_class = await driver.current_license_class(category)
 
                 if stat:
