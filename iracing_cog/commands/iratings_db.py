@@ -30,48 +30,52 @@ class IratingsDb:
                 return
 
             category_model = Category.from_name(category)
-
             today = datetime.now()
             date_6mo_ago = six_months_before(today)
+            all_irating_dicts = await get_irating_dicts(guild, category_model)
 
-            p = figure(
-                title=f'{category_model.friendly_name()} iRatings',
-                x_axis_type='datetime',
-                x_range=(date_6mo_ago, datetime.now())
-            )
-            p.toolbar.logo = None
-            p.toolbar_location = None
-            legend = Legend(location=(0, -10))
-            p.add_layout(legend, 'right')
-            output_file('output_iratings.html')
+            split_irating_dicts = [all_irating_dicts[x:x + 10] for x in range(0, len(all_irating_dicts), 10)]
+            for irating_dicts in split_irating_dicts:
+                await self.build_and_post_chart(ctx, irating_dicts, category_model, date_6mo_ago)
 
-            colors = itertools.cycle(Category20[20])
+    async def build_and_post_chart(self, ctx, irating_dicts, category_model, date_6mo_ago):
+        p = figure(
+            title=f'{category_model.friendly_name()} iRatings',
+            x_axis_type='datetime',
+            x_range=(date_6mo_ago, datetime.now())
+        )
+        p.toolbar.logo = None
+        p.toolbar_location = None
+        legend = Legend(location=(0, -10))
+        p.add_layout(legend, 'right')
+        output_file('output_iratings.html')
 
-            irating_dicts = await get_irating_dicts(guild, category_model)
-            for irating_dict in irating_dicts:
-                for user_id, iratings_list in irating_dict.items():
-                    try:
-                        member = ctx.guild.get_member(int(user_id))
-                        datetimes = []
-                        iratings = []
-                        for irating in iratings_list:
-                            datetimes.append(irating.datetime())
-                            iratings.append(irating.value)
+        colors = itertools.cycle(Category20[20])
 
-                        p.line(
-                            datetimes,
-                            iratings,
-                            legend_label=member.display_name,
-                            line_width=2,
-                            color=next(colors)
-                        )
-                    except:
-                        continue
+        for irating_dict in irating_dicts:
+            for user_id, iratings_list in irating_dict.items():
+                try:
+                    member = ctx.guild.get_member(int(user_id))
+                    datetimes = []
+                    iratings = []
+                    for irating in iratings_list:
+                        datetimes.append(irating.datetime())
+                        iratings.append(irating.value)
 
-            filename = f'irating_graph_{ctx.guild.id}.png'
-            export_png(p, filename=filename, webdriver=webdriver.Chrome(options=self.webdriver_options()))
-            await ctx.send(file=discord.File(filename))
-            cleanup_file(filename)
+                    p.line(
+                        datetimes,
+                        iratings,
+                        legend_label=member.display_name,
+                        line_width=2,
+                        color=next(colors)
+                    )
+                except:
+                    continue
+
+        filename = f'irating_graph_{ctx.guild.id}.png'
+        export_png(p, filename=filename, webdriver=webdriver.Chrome(options=self.webdriver_options()))
+        await ctx.send(file=discord.File(filename))
+        cleanup_file(filename)
 
     def webdriver_options(self):
         options = webdriver.chrome.options.Options()
