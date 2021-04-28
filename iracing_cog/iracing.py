@@ -22,6 +22,8 @@ from .commands.save_league import SaveLeague
 from .commands.remove_league import RemoveLeague
 from .commands.league_standings import LeagueStandings
 from .db_helpers import *
+from datadog import initialize, statsd
+from .metrics import *
 
 dotenv.load_dotenv()
 
@@ -31,10 +33,16 @@ log.setLevel(logging.DEBUG)
 handler = LogDNAHandler(logdna_key, {'hostname': os.getenv("LOG_LOCATION")})
 log.addHandler(handler)
 
+options = {
+    'api_key': os.getenv("DATADOG_API_KEY"),
+    'app_key': os.getenv("DATADOG_APP_KEY"),
+    'statsd_host':os.getenv("DATADOG_HOST"),
+    'statsd_port':8125
+}
+initialize(**options)
 
 class Iracing(commands.Cog):
     """A cog that can give iRacing data about users"""
-
     def __init__(self, bot):
         self.bot = bot
         self.pyracing = pyracing.Client(
@@ -65,6 +73,7 @@ class Iracing(commands.Cog):
     @tasks.loop(hours=3)
     async def update_all_servers(self):
         """Update all users career stats and iratings for building a current leaderboard"""
+        statsd.increment(UPDATE_ALL_SERVERS)
         await self.updater.update_all_servers()
 
     @tasks.loop(hours=12)
@@ -72,12 +81,14 @@ class Iracing(commands.Cog):
         """Update all series data, this does nothing 99% of the time,
         but when a new season start it gets the new stuff"""
         log.info('Updating all series')
+        statsd.increment(UPDATE_SERIES)
         await self.updater.update_series()
         log.info('Done updating all series')
 
     @commands.command(name='update')
     async def update(self, ctx):
         """Update the career, yearly stats, and iratings for the user who called the command in the given server"""
+        statsd.increment(MANUAL_USER_UPDATE)
         if is_support_guild(ctx.guild.id):
             await ctx.send('Sorry, this discord does not allow update, saveid, '
                            'leaderboard, and series commands so as not to overload me. '
