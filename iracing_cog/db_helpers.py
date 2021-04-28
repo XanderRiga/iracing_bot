@@ -63,18 +63,31 @@ async def get_or_create_season(series):
         }
     )
 
+    season = season_model[0]
+
+    # If there is new data, we want to update
+    await season.update_from_dict({
+        'series': series_model,
+        'start_time': series.date_start,
+        'end_time': series.date_end,
+        'active': series.active,
+        'season_quarter': series.season_quarter,
+        'season_year': series.season_year
+    })
+    await season.save()
+
     for car in cars:
-        await season_model[0].cars.add(car)
+        await season.cars.add(car)
 
     for track in series.tracks:
-        await get_or_create_season_combo(track, season_model[0])
+        await get_or_create_season_combo(track, season)
 
-    return season_model[0]
+    return season
 
 
 async def get_or_create_season_combo(track, season):
     track_model = await get_or_create_track(track)
-    season_combo = await SeasonCombo.get_or_create(
+    season_combo_model = await SeasonCombo.get_or_create(
         season=season,
         race_week=track.race_week,
         defaults={
@@ -83,7 +96,17 @@ async def get_or_create_season_combo(track, season):
             'time_of_day': track.time_of_day
         }
     )
-    return season_combo[0]
+
+    season_combo = season_combo_model[0]
+
+    await season_combo.update_from_dict({
+        'track': track_model,
+        'track_layout': track.config,
+        'time_of_day': track.time_of_day
+    })
+    await season_combo.save()
+
+    return season_combo
 
 
 async def get_or_create_track(track):
