@@ -4,6 +4,7 @@ from ..db_helpers import init_tortoise, Tortoise
 from ..models import Driver, Guild, Category
 import traceback
 from datetime import datetime
+from statistics import mean
 
 
 class LeaderboardDb:
@@ -40,10 +41,6 @@ class LeaderboardDb:
         cleanup_file(filename)
 
     async def get_leaderboard_html_string(self, drivers, guild, category, yearly=False):
-        type_string = 'Yearly' if yearly else 'Career'
-        header_string = 'iRacing ' + category.friendly_name() + ' ' + \
-                        type_string + ' Leaderboard'
-
         table = PrettyTable()
         table.field_names = [
             '#', 'Discord Name', 'iRacing Name', 'Starts', 'Current iRating', 'Peak iRating', 'License', 'Wins',
@@ -54,6 +51,7 @@ class LeaderboardDb:
         drivers_with_ir.sort(reverse=True, key=lambda tup: tup[0])
         sorted_drivers = [x for key, x in drivers_with_ir]
 
+        iratings_list = []
         index = 1
         for driver in sorted_drivers:
             try:
@@ -68,6 +66,10 @@ class LeaderboardDb:
                     peak_ir = await driver.peak_irating(category)
 
                 current_ir = await driver.current_irating(category)
+
+                if current_ir and type(current_ir.value) is int:
+                    iratings_list.append(current_ir.value)
+
                 license_class = await driver.current_license_class(category)
 
                 if stat:
@@ -97,6 +99,18 @@ class LeaderboardDb:
                 self.log.error(e)
                 self.log.error(f'Error printing leaderboard data for user: {driver.name}')
                 continue
+
+        try:
+            iratings_avg = f' - Avg iRating: {round(mean(iratings_list))}'
+        except:
+            iratings_avg = None
+
+        type_string = 'Yearly' if yearly else 'Career'
+        header_string = 'iRacing ' + category.friendly_name() + ' ' + \
+                        type_string + ' Leaderboard'
+
+        if iratings_avg:
+            header_string += iratings_avg
 
         header_html_string = build_html_header_string(header_string)
         html_string = table.get_html_string(attributes={"id": "iracing_table"})
