@@ -253,8 +253,6 @@ class Iracing(commands.Cog):
         if not series_id:
             await ctx.send('You must pass at least one series ID with this command. '
                            'Use `!help addfavseries` for more info.')
-
-        statsd.increment(ADD_FAV_SERIES_METRIC)
         await self.setfavseries(ctx, ids=str(series_id))
 
     @commands.command(name='setfavseries')
