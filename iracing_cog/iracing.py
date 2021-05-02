@@ -73,7 +73,7 @@ class Iracing(commands.Cog):
     @tasks.loop(hours=3)
     async def update_all_servers(self):
         """Update all users career stats and iratings for building a current leaderboard"""
-        statsd.increment(UPDATE_ALL_SERVERS)
+        statsd.increment(UPDATE_ALL_SERVERS_METRIC)
         await self.updater.update_all_servers()
 
     @tasks.loop(hours=12)
@@ -81,14 +81,14 @@ class Iracing(commands.Cog):
         """Update all series data, this does nothing 99% of the time,
         but when a new season start it gets the new stuff"""
         log.info('Updating all series')
-        statsd.increment(UPDATE_SERIES)
+        statsd.increment(UPDATE_SERIES_METRIC)
         await self.updater.update_series()
         log.info('Done updating all series')
 
     @commands.command(name='update')
     async def update(self, ctx):
         """Update the career, yearly stats, and iratings for the user who called the command in the given server"""
-        statsd.increment(MANUAL_USER_UPDATE)
+        statsd.increment(MANUAL_USER_UPDATE_METRIC)
         if is_support_guild(ctx.guild.id):
             await ctx.send('Sorry, this discord does not allow update, saveid, '
                            'leaderboard, and series commands so as not to overload me. '
@@ -103,6 +103,7 @@ class Iracing(commands.Cog):
     async def updateserver(self, ctx):
         """Update all users career and yearly stats and iratings for building a current leaderboard.
         This is run every hour anyways, so it isn't necessary most of the time to run manually"""
+        statsd.increment(UPDATE_SERVER_METRIC)
         if is_support_guild(ctx.guild.id):
             await ctx.send('Sorry, this discord does not allow update, saveid, '
                            'leaderboard, and series commands so as not to overload me. '
@@ -123,6 +124,7 @@ class Iracing(commands.Cog):
     async def recentraces(self, ctx, *, iracing_id=None):
         """Shows the recent race data for the given iracing id. If no iracing id is provided it will attempt
         to use the stored iracing id for the user who called the command."""
+        statsd.increment(RECENT_RACES_METRIC)
         await self.recent_races.call(ctx, iracing_id)
 
     # @commands.command(name='lastseries')
@@ -135,12 +137,14 @@ class Iracing(commands.Cog):
     async def yearlystats(self, ctx, *, iracing_id=None):
         """Shows the yearly stats for the given iracing id. If no iracing id is provided it will attempt
         to use the stored iracing id for the user who called the command."""
+        statsd.increment(YEARLY_STATS_METRIC)
         await self.yearly_stats_db.call(ctx, iracing_id)
 
     @commands.command(name='careerstats')
     async def careerstats(self, ctx, *, iracing_id=None):
         """Shows the career stats for the given iracing id. If no iracing id is provided it will attempt
         to use the stored iracing id for the user who called the command."""
+        statsd.increment(CAREER_STATS_METRIC)
         await self.career_stats_db.call(ctx, iracing_id)
 
     @commands.command(name='saveid')
@@ -153,6 +157,7 @@ class Iracing(commands.Cog):
                            'Try `!careerstats` or `!yearlystats` with your customer ID to test '
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
+        statsd.increment(SAVE_ID_METRIC)
         await self.save_id.call(ctx, iracing_id)
 
     @commands.command(name='savename')
@@ -165,6 +170,8 @@ class Iracing(commands.Cog):
                            'Try `!careerstats` or `!yearlystats` with your customer ID to test '
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
+
+        statsd.increment(SAVE_NAME_METRIC)
         await self.save_name.call(ctx, iracing_name)
 
     @commands.command(name='saveleague')
@@ -178,6 +185,7 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
 
+        statsd.increment(SAVE_LEAGUE_METRIC)
         await self.save_league.call(ctx, league_id)
 
     @commands.command(name='removeleague')
@@ -191,6 +199,7 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
 
+        statsd.increment(REMOVE_LEAGUE_METRIC)
         await self.remove_league.call(ctx, league_id)
 
     @commands.command(name='leaguestandings')
@@ -204,6 +213,7 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
 
+        statsd.increment(LEAGUE_STANDINGS_METRIC)
         await self.league_standings.call(ctx)
 
     @commands.command(name='leaderboard')
@@ -219,18 +229,19 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
 
+        statsd.increment(LEADERBOARD_METRIC)
         await self.leaderboard_db.call(ctx, category, type)
 
     @commands.command()
     async def iratings(self, ctx, category='road'):
-
+        statsd.increment(IRATINGS_METRIC)
         await self.iratings_db.call(ctx, category)
 
     @commands.command(name='allseries')
     async def allseries(self, ctx):
         """Show all series currently in iRacing to help with choosing your favorites for
         `!setfavseries`"""
-
+        statsd.increment(ALL_SERIES_METRIC)
         await self.all_series_db.call(ctx)
 
     @commands.command(name='addfavseries')
@@ -243,6 +254,7 @@ class Iracing(commands.Cog):
             await ctx.send('You must pass at least one series ID with this command. '
                            'Use `!help addfavseries` for more info.')
 
+        statsd.increment(ADD_FAV_SERIES_METRIC)
         await self.setfavseries(ctx, ids=str(series_id))
 
     @commands.command(name='setfavseries')
@@ -262,6 +274,7 @@ class Iracing(commands.Cog):
             await ctx.send('You must pass at least one ID. Use `!help setfavseries` for more help')
             return
 
+        statsd.increment(SET_FAV_SERIES_METRIC)
         await self.set_fav_series.call(ctx, ids)
 
     @commands.command(name='currentseries')
@@ -275,6 +288,8 @@ class Iracing(commands.Cog):
                            'Try `!careerstats` or `!yearlystats` with your customer ID to test '
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
+
+        statsd.increment(CURRENT_SERIES_METRIC)
         await self.current_series_db.call(ctx)
 
     @commands.command(name='removefavseries')
@@ -291,11 +306,13 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
 
+        statsd.increment(REMOVE_FAV_SERIES_METRIC)
         await self.remove_fav_series.call(ctx, series_id)
 
     @commands.command(name='support')
     async def support(self, ctx):
         """Having issues with the bot? This will give you a link to the support server so you can ask for help"""
+        statsd.increment(SUPPORT_METRIC)
         await ctx.send('Join the support server here: https://discord.gg/bAq8Ec5JPQ')
 
 
