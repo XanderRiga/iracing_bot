@@ -42,10 +42,7 @@ class LeaderboardDb:
 
     async def get_leaderboard_html_string(self, drivers, guild, category, yearly=False):
         table = PrettyTable()
-        table.field_names = [
-            '#', 'Discord Name', 'iRacing Name', 'Starts', 'Current iRating', 'Peak iRating', 'License', 'Wins',
-            'Poles', 'Top 5s', 'Laps Led', 'Win %', 'Top 5 %', 'Laps Led %', 'Avg Incidents'
-        ]
+        table.field_names = self.table_headers()
 
         drivers_with_ir = [(await x.current_irating_value(category), x) for x in drivers]
         drivers_with_ir.sort(reverse=True, key=lambda tup: tup[0])
@@ -66,11 +63,12 @@ class LeaderboardDb:
                     peak_ir = await driver.peak_irating(category)
 
                 current_ir = await driver.current_irating(category)
-
                 if current_ir and type(current_ir.value) is int:
                     iratings_list.append(current_ir.value)
 
                 license_class = await driver.current_license_class(category)
+
+                monthly_irating_delta = await self.driver_monthly_irating_delta(driver, category, current_ir)
 
                 if stat:
                     table.add_row(
@@ -81,6 +79,7 @@ class LeaderboardDb:
                             str(stat.total_starts),
                             str(current_ir.value) if current_ir else '1350',
                             str(peak_ir.value) if peak_ir else '1350',
+                            monthly_irating_delta if monthly_irating_delta else '+0',
                             str(license_class.class_letter()) + ' ' + str(license_class.safety_rating()) if
                             license_class else '',
                             str(stat.total_wins),
@@ -118,6 +117,18 @@ class LeaderboardDb:
 
         return css + charset() + header_html_string + "\n" + html_string
 
+    async def driver_monthly_irating_delta(self, driver, category, current_irating):
+        ir_one_month_ago = await driver.irating_at_datetime(category, months_before(datetime.today(), 1))
+        if not ir_one_month_ago or not current_irating:
+            return '+0'
+
+        irating_change = current_irating.value - ir_one_month_ago.value
+
+        if irating_change >= 0:
+            return f'+{irating_change}'
+        else:
+            return f'{irating_change}'
+
     def member_name(self, member_id, guild):
         member = discord.utils.find(lambda m: m.id == int(member_id), guild.members)
         if member:
@@ -135,3 +146,23 @@ class LeaderboardDb:
             if str(driver.discord_id) not in current_member_ids:
 
                 await db_guild.drivers.remove(driver)
+
+    def table_headers(self):
+        return [
+            '#',
+            'Discord Name',
+            'iRacing Name',
+            'Starts',
+            'Current iRating',
+            'Peak iRating',
+            'Monthly iRating Change',
+            'License',
+            'Wins',
+            'Poles',
+            'Top 5s',
+            'Laps Led',
+            'Win %',
+            'Top 5 %',
+            'Laps Led %',
+            'Avg Incidents'
+        ]

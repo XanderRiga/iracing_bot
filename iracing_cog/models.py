@@ -110,6 +110,10 @@ class Driver(Base):
     iracing_name = fields.TextField(null=True)
     iracing_id = fields.TextField(null=True)
 
+    async def irating_at_datetime(self, category, date_time):
+        iratings = await self.iratings.filter(category=category)
+        return await min(iratings, key=lambda irating: abs(date_time - irating.datetime()))
+
     async def iratings_by_category(self, category):
         return await self.iratings.filter(category=category)
 
