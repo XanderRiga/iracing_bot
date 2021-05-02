@@ -31,7 +31,7 @@ class IratingsDb:
 
             category_model = Category.from_name(category)
             today = datetime.now()
-            date_6mo_ago = six_months_before(today)
+            date_6mo_ago = months_before(today, 6)
             all_irating_dicts = await get_irating_dicts(guild, category_model)
 
             split_irating_dicts = [all_irating_dicts[x:x + 10] for x in range(0, len(all_irating_dicts), 10)]

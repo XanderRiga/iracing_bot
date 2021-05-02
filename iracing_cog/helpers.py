@@ -208,8 +208,8 @@ def cleanup_file(file_name):
         os.remove(file_name)
 
 
-def six_months_before(date):
-    return date - relativedelta.relativedelta(months=6)
+def months_before(date, n):
+    return date - relativedelta.relativedelta(months=n)
 
 
 def peak_irating_value(iratings):
