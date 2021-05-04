@@ -112,7 +112,25 @@ class Driver(Base):
 
     async def irating_at_datetime(self, category, date_time):
         iratings = await self.iratings.filter(category=category)
-        return await min(iratings, key=lambda irating: abs(date_time - irating.datetime()))
+
+        irating_at_datetime = iratings[0]
+        irating_difference = (date_time - irating_at_datetime.datetime()).total_seconds()
+        # I want the closest date BEFORE the datetime, or if there is none, then the closest after
+        for irating in iratings:
+            # This will be positive if the datetime is after this irating's datetime
+            time_delta = (date_time - irating.datetime()).total_seconds()
+
+            # If it's negative, we would prefer positive or closer to 0 negative(greater than)
+            if irating_difference < 0:
+                if time_delta > irating_difference:
+                    irating_at_datetime = irating
+                    irating_difference = time_delta
+            else: # If it's positive, we just want a lower number
+                if 0 < time_delta < irating_difference:
+                    irating_at_datetime = irating
+                    irating_difference = time_delta
+
+        return irating_at_datetime
 
     async def iratings_by_category(self, category):
         return await self.iratings.filter(category=category)
