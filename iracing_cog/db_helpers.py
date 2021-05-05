@@ -1,10 +1,10 @@
 from .models import *
 from tortoise import Tortoise
 from datetime import datetime
-import traceback
+import os
 
 TORTOISE_ORM = {
-    "connections": {"default": 'sqlite://db.sqlite3'},
+    "connections": {"default": os.getenv("PG_DB_URL")},
     "apps": {
         "models": {
             'models': ['iracing_cog.models', 'aerich.models'],
