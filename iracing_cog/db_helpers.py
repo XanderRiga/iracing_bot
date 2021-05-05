@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 TORTOISE_ORM = {
-    "connections": {"default": os.getenv("PG_DB_URL")},
+    "connections": {"default": 'sqlite://db.sqlite3'},
     "apps": {
         "models": {
             'models': ['iracing_cog.models', 'aerich.models'],
@@ -16,7 +16,7 @@ TORTOISE_ORM = {
 
 async def init_tortoise():
     await Tortoise.init(
-        db_url=os.getenv("PG_DB_URL"),
+        db_url='sqlite://db.sqlite3',
         modules={'models': ['iracing_cog.models', 'aerich.models']}
     )
 
