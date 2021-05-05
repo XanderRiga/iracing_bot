@@ -16,7 +16,7 @@ TORTOISE_ORM = {
 
 async def init_tortoise():
     await Tortoise.init(
-        db_url='sqlite://db.sqlite3',
+        db_url=os.getenv("PG_DB_URL"),
         modules={'models': ['iracing_cog.models', 'aerich.models']}
     )
 
