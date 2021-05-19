@@ -12,6 +12,7 @@ from .commands.career_stats_db import CareerStatsDb
 from .commands.yearly_stats_db import YearlyStatsDb
 from .commands.save_id import SaveId
 from .commands.save_name import SaveName
+from .commands.save_user import SaveUser
 from .commands.iratings_db import IratingsDb
 from .commands.all_series_db import AllSeriesDb
 from .commands.set_fav_series import SetFavSeries
@@ -57,6 +58,7 @@ class Iracing(commands.Cog):
         self.career_stats_db = CareerStatsDb(self.pyracing, log)
         self.save_id = SaveId(log)
         self.save_name = SaveName(self.pyracing, log)
+        self.save_user = SaveUser(self.save_name, self.save_id, self.pyracing, log)
         self.iratings_db = IratingsDb(log)
         self.all_series_db = AllSeriesDb(log)
         self.current_series_db = CurrentSeriesDb(log)
@@ -158,7 +160,7 @@ class Iracing(commands.Cog):
                            'or go to #invite-link to bring the bot to your discord for all functionality')
             return
         statsd.increment(SAVE_ID_METRIC)
-        await self.save_id.call(ctx, iracing_id)
+        await self.save_id.call(ctx, ctx.author, iracing_id)
 
     @commands.command(name='savename')
     async def savename(self, ctx, *, iracing_name):
@@ -172,7 +174,30 @@ class Iracing(commands.Cog):
             return
 
         statsd.increment(SAVE_NAME_METRIC)
-        await self.save_name.call(ctx, iracing_name)
+        await self.save_name.call(ctx, ctx.author, iracing_name)
+
+    @commands.command(name='saveuser')
+    async def saveuser(self, ctx, *, input):
+        """Use this command to save another user's iRacing account to their Discord account.
+        This should be called like:
+        !saveuser @DiscordUser Max Verstappen or !saveuser @DiscordUser 168966"""
+        if is_support_guild(ctx.guild.id):
+            await ctx.send('Sorry, this discord does not allow update, saveid, savename, '
+                           'leaderboard, and series commands so as not to overload me. '
+                           'Try `!careerstats` or `!yearlystats` with your customer ID to test '
+                           'or go to #invite-link to bring the bot to your discord for all functionality')
+            return
+
+        input_array = input.split()
+
+        discord_user = input_array[0]
+        iracing_name_or_id = ' '.join(input_array[1:])
+
+        statsd.increment(SAVE_USER_METRIC)
+
+        discord_user_id = discord_user[3:-1] # Remove the <@! and > from the tag we get passed in
+        discord_member = discord.utils.find(lambda m: m.id == int(discord_user_id), ctx.guild.members)
+        await self.save_user.call(ctx, discord_member, iracing_name_or_id)
 
     @commands.command(name='saveleague')
     async def saveleague(self, ctx, *, league_id):
