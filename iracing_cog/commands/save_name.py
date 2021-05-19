@@ -7,7 +7,7 @@ class SaveName:
         self.pyracing = pyracing
         self.log = log
 
-    async def call(self, ctx, iracing_name):
+    async def call(self, ctx, member, iracing_name):
         try:
             driver_stats_list = await self.pyracing.driver_stats(search=iracing_name)
         except:
@@ -23,10 +23,11 @@ class SaveName:
             await self.send_error_message(ctx)
             return
 
-        user_id = str(ctx.author.id)
+        user_id = str(member.id)
         guild_id = str(ctx.guild.id)
         await create_or_update_driver(queried_driver.cust_id, user_id, guild_id, queried_driver.display_name)
-        await ctx.send('iRacing Name and ID successfully saved. Use `!update` to see this user on the leaderboard.')
+        await ctx.send('iRacing Name and ID successfully saved.'
+                       'This user will appear on the leaderboard during the next update, check back in a few hours!')
 
     async def send_error_message(self, ctx):
         await ctx.send('Driver could not be found. '
