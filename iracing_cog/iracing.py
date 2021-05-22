@@ -25,6 +25,7 @@ from .commands.league_standings import LeagueStandings
 from .db_helpers import *
 from datadog import initialize, statsd
 from .metrics import *
+import re
 
 dotenv.load_dotenv()
 
@@ -190,13 +191,16 @@ class Iracing(commands.Cog):
 
         input_array = input.split()
 
-        discord_user = input_array[0]
+        discord_tag = input_array[0]
+        discord_user_id = ''.join(filter(str.isdigit, discord_tag))
+        discord_member = discord.utils.find(lambda m: m.id == int(discord_user_id), ctx.guild.members)
+        if not discord_member:
+            await ctx.send('Discord user could not be found')
+            return
+
         iracing_name_or_id = ' '.join(input_array[1:])
 
         statsd.increment(SAVE_USER_METRIC)
-
-        discord_user_id = discord_user[3:-1] # Remove the <@! and > from the tag we get passed in
-        discord_member = discord.utils.find(lambda m: m.id == int(discord_user_id), ctx.guild.members)
         await self.save_user.call(ctx, discord_member, iracing_name_or_id)
 
     @commands.command(name='saveleague')
