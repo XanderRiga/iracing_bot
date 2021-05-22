@@ -360,3 +360,12 @@ async def remove_league(guild_id, league_id):
     guild = await get_or_create_guild(guild_id)
     league = await League.get(iracing_id=league_id)
     await guild.leagues.remove(league)
+
+async def remove_user_from_guild(guild_id, driver_discord_id):
+    driver = await Driver.get_or_none(discord_id=driver_discord_id)
+    guild = await Guild.get_or_none(discord_id=guild_id)
+
+    if not driver or not guild:
+        return
+
+    await driver.guilds.remove(guild)

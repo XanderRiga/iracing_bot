@@ -13,6 +13,7 @@ from .commands.yearly_stats_db import YearlyStatsDb
 from .commands.save_id import SaveId
 from .commands.save_name import SaveName
 from .commands.save_user import SaveUser
+from .commands.remove_user import RemoveUser
 from .commands.iratings_db import IratingsDb
 from .commands.all_series_db import AllSeriesDb
 from .commands.set_fav_series import SetFavSeries
@@ -60,6 +61,7 @@ class Iracing(commands.Cog):
         self.save_id = SaveId(log)
         self.save_name = SaveName(self.pyracing, log)
         self.save_user = SaveUser(self.save_name, self.save_id, self.pyracing, log)
+        self.remove_user = RemoveUser(self.pyracing, log)
         self.iratings_db = IratingsDb(log)
         self.all_series_db = AllSeriesDb(log)
         self.current_series_db = CurrentSeriesDb(log)
@@ -202,6 +204,22 @@ class Iracing(commands.Cog):
 
         statsd.increment(SAVE_USER_METRIC)
         await self.save_user.call(ctx, discord_member, iracing_name_or_id)
+
+    @commands.command(name='removeuser')
+    async def removeuser(self, ctx, *, discord_tag):
+        """Use this command to remove another user from the leaderboard in this discord:
+        !removeuser @DiscordUser"""
+        if is_support_guild(ctx.guild.id):
+            await ctx.send('Sorry, this discord does not allow update, saveid, savename, '
+                           'leaderboard, and series commands so as not to overload me. '
+                           'Try `!careerstats` or `!yearlystats` with your customer ID to test '
+                           'or go to #invite-link to bring the bot to your discord for all functionality')
+            return
+
+        discord_user_id = ''.join(filter(str.isdigit, discord_tag))
+
+        statsd.increment(REMOVE_USER_METRIC)
+        await self.remove_user.call(ctx, discord_user_id)
 
     @commands.command(name='saveleague')
     async def saveleague(self, ctx, *, league_id):
