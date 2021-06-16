@@ -75,7 +75,7 @@ class Iracing(commands.Cog):
         self.update_all_servers.start()
         self.update_series.start()
 
-    @tasks.loop(hours=5)
+    @tasks.loop(hours=12)
     async def update_all_servers(self):
         """Update all users career stats and iratings for building a current leaderboard"""
         statsd.increment(UPDATE_ALL_SERVERS_METRIC)
