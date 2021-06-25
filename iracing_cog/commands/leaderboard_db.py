@@ -96,7 +96,7 @@ class LeaderboardDb:
             except Exception as e:
                 traceback.print_exc()
                 self.log.error(e)
-                self.log.error(f'Error printing leaderboard data for user: {driver.name}')
+                self.log.error(f'Error printing leaderboard data for user: {driver.iracing_name}')
                 continue
 
         try:
