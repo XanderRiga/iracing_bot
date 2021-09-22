@@ -96,6 +96,11 @@ This will give an overview of the yearly stats of the player with the given iRac
 If an iRacing Client ID is not provided, then it will use the saved ID for the user who called the command.
 If the user has not saved their ID, they must provide an iRacing Client ID.
 
+### !removeuser <@user>
+This will remove the @ mentioned user from the leaderboard.
+The user must be @ mentioned(meaning you have to type @ and select them from the list).
+It will not work if you type in just their name or iRacing ID.
+
 # Local Setup
 - Make sure you have [pipenv](https://pypi.org/project/pipenv/) installed wherever you plan to run the bot.
 - From the root folder of the bot you will need to clone [this repo](https://github.com/XanderRiga/iracing_cog) 
