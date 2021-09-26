@@ -211,6 +211,8 @@ def cleanup_file(file_name):
 def months_before(date, n):
     return date - relativedelta.relativedelta(months=n)
 
+def weeks_before(date, n):
+    return date - relativedelta.relativedelta(weeks=n)
 
 def peak_irating_value(iratings):
     max = iratings[0][1]

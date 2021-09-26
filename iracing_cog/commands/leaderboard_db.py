@@ -68,7 +68,7 @@ class LeaderboardDb:
 
                 license_class = await driver.current_license_class(category)
 
-                monthly_irating_delta = await self.driver_monthly_irating_delta(driver, category, current_ir)
+                weekly_irating_delta = await self.driver_weekly_irating_delta(driver, category, current_ir)
 
                 if stat:
                     table.add_row(
@@ -79,7 +79,7 @@ class LeaderboardDb:
                             str(stat.total_starts),
                             str(current_ir.value) if current_ir else '1350',
                             str(peak_ir.value) if peak_ir else '1350',
-                            monthly_irating_delta if monthly_irating_delta else '+0',
+                            weekly_irating_delta if weekly_irating_delta else '+0',
                             str(license_class.class_letter()) + ' ' + str(license_class.safety_rating()) if
                             license_class else '',
                             str(stat.total_wins),
@@ -129,6 +129,18 @@ class LeaderboardDb:
         else:
             return f'{irating_change}'
 
+    async def driver_weekly_irating_delta(self, driver, category, current_irating):
+        ir_one_week_ago = await driver.irating_at_datetime(category, weeks_before(datetime.today(), 1))
+        if not ir_one_week_ago or not current_irating:
+            return '+0'
+
+        irating_change = current_irating.value - ir_one_week_ago.value
+
+        if irating_change >= 0:
+            return f'+{irating_change}'
+        else:
+            return f'{irating_change}'
+
     def member_name(self, member_id, guild):
         member = discord.utils.find(lambda m: m.id == int(member_id), guild.members)
         if member:
@@ -155,7 +167,7 @@ class LeaderboardDb:
             'Starts',
             'Current iRating',
             'Peak iRating',
-            'Monthly iRating Change',
+            'Weekly iRating Change',
             'License',
             'Wins',
             'Poles',
