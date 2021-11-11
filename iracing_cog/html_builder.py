@@ -8,7 +8,7 @@ from .models import Series
 def get_yearly_stats_html_db(yearly_stats, iracing_id):
     table = PrettyTable()
     table.field_names = [
-        'Year', 'Category', 'Starts', 'Top 5s', 'Wins', 'Avg Start', 'Avg Finish', 'Avg Incidents', 'Top 5 %', 'Win %'
+        'Year', 'Category', 'Starts', 'Total Laps', 'Top 5s', 'Wins', 'Avg Start', 'Avg Finish', 'Avg Incidents', 'Top 5 %', 'Win %'
     ]
     for yearly_stat in yearly_stats:
         table.add_row(
@@ -16,6 +16,7 @@ def get_yearly_stats_html_db(yearly_stats, iracing_id):
                 str(yearly_stat.year),
                 yearly_stat.category.friendly_name(),
                 str(yearly_stat.total_starts),
+                str(yearly_stat.total_laps),
                 str(yearly_stat.total_top_fives),
                 str(yearly_stat.total_wins),
                 str(yearly_stat.avg_start_pos),
