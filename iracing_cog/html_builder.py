@@ -93,13 +93,14 @@ def get_career_stats_html(career_stats, iracing_id):
 def get_career_stats_html_db(career_stats, iracing_id):
     table = PrettyTable()
     table.field_names = [
-        'Category', 'Starts', 'Top 5s', 'Wins', 'Avg Start', 'Avg Finish', 'Avg Incidents', 'Top 5 %', 'Win %'
+        'Category', 'Starts', 'Total Laps', 'Top 5s', 'Wins', 'Avg Start', 'Avg Finish', 'Avg Incidents', 'Top 5 %', 'Win %'
     ]
     for career_stat in career_stats:
         table.add_row(
             [
                 career_stat.category.friendly_name(),
                 str(career_stat.total_starts),
+                str(career_stat.total_laps),
                 str(career_stat.total_top_fives),
                 str(career_stat.total_wins),
                 str(career_stat.avg_start_pos),
