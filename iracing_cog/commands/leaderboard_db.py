@@ -36,7 +36,15 @@ class LeaderboardDb:
                                                                        is_yearly)
             filename = f'{ctx.guild.id}_leaderboard.jpg'
             image_from_string(table_html_string, filename)
-            await ctx.send(file=discord.File(filename))
+
+            try :
+                await ctx.send(file=discord.File(filename))
+            except Exception as e:
+                if e.status == 403:
+                    await ctx.send('This channel does not permit file upload. '
+                                   'Please enable `Attach Files` in settings or use another channel and try again')
+                else:
+                    raise e
 
         cleanup_file(filename)
 

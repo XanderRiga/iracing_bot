@@ -74,7 +74,14 @@ class IratingsDb:
 
         filename = f'irating_graph_{ctx.guild.id}.png'
         export_png(p, filename=filename, webdriver=webdriver.Chrome(options=self.webdriver_options()))
-        await ctx.send(file=discord.File(filename))
+        try:
+            await ctx.send(file=discord.File(filename))
+        except Exception as e:
+            if e.status == 403:
+                await ctx.send('This channel does not permit file upload. '
+                               'Please enable `Attach Files` in settings or use another channel and try again')
+            else:
+                raise e
         cleanup_file(filename)
 
     def webdriver_options(self):

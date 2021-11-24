@@ -37,7 +37,14 @@ class CareerStatsDb:
                     career_stats_html = get_career_stats_html_db(career_stats, iracing_id)
                     filename = f'{iracing_id}_career_stats.jpg'
                     image_from_string(career_stats_html, filename)
-                    await ctx.send(file=discord.File(filename))
+                    try:
+                        await ctx.send(file=discord.File(filename))
+                    except Exception as e:
+                        if e.status == 403:
+                            await ctx.send('This channel does not permit file upload. '
+                                           'Please enable `Attach Files` in settings or use another channel and try again')
+                        else:
+                            raise e
                     cleanup_file(filename)
                 else:
                     await ctx.send('No career stats found for user: ' + str(iracing_id))

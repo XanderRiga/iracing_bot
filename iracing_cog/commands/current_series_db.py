@@ -31,7 +31,15 @@ class CurrentSeriesDb:
             if this_week_string:
                 this_week_filename = f'{ctx.guild.id}_this_week.jpg'
                 image_from_string(this_week_string, this_week_filename)
-                await ctx.send(file=discord.File(this_week_filename))
+                try:
+                    await ctx.send(file=discord.File(this_week_filename))
+                except Exception as e:
+                    if e.status == 403:
+                        await ctx.send('This channel does not permit file upload. '
+                                       'Please enable `Attach Files` in settings or use another channel and try again')
+                        return
+                    else:
+                        raise e
                 cleanup_file(this_week_filename)
 
             if next_week_string:

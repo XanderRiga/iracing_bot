@@ -30,7 +30,14 @@ class RecentRaces:
                 table_html_string = await recent_races_table_db_string(races_stats_list, iracing_id)
                 filename = f'{guild_id}_{iracing_id}_recent_races.jpg'
                 image_from_string(table_html_string, filename)
-                await ctx.send(file=discord.File(filename))
+                try:
+                    await ctx.send(file=discord.File(filename))
+                except Exception as e:
+                    if e.status == 403:
+                        await ctx.send('This channel does not permit file upload. '
+                                       'Please enable `Attach Files` in settings or use another channel and try again')
+                    else:
+                        raise e
                 cleanup_file(filename)
             else:
                 await ctx.send('Recent races not found for user: ' + iracing_id)
