@@ -17,6 +17,7 @@ discord = {py = "~=1.6.0"}
 datadog = "*"
 setuptools = "~=51.0.0"
 asyncpg = "*"
+pyracing = "*"
 
 [dev-packages]
 

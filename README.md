@@ -103,13 +103,8 @@ It will not work if you type in just their name or iRacing ID.
 
 # Local Setup
 - Make sure you have [pipenv](https://pypi.org/project/pipenv/) installed wherever you plan to run the bot.
-- From the root folder of the bot you will need to clone [this repo](https://github.com/XanderRiga/iracing_cog) 
-  into the `iracing_cog` folder
-- From the root folder of the **cog**(note: not the bot, the cog), you will need to clone 
-  [this repo](https://github.com/Esterni/pyracing) into the pyracing folder.
 - Run `pipenv shell` and then pip install . from inside the root of the `pyracing` dir
   
-  *Note* I am aware this setup is insane with 3 nested repos, and I am actively working to move away from this method.
 - Once you have cloned the bot, from inside the root folder of the bot, run `pipenv install`
 - You will need to do a special installation for `wkhtmltopdf` which is part of what is used to generate images. 
   Follow the instructions from step 2 [here](https://pypi.org/project/imgkit/) for your platform.
