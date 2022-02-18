@@ -102,10 +102,10 @@ The user must be @ mentioned(meaning you have to type @ and select them from the
 It will not work if you type in just their name or iRacing ID.
 
 # Local Setup
+- Install python 3.8 (I use [pyenv](https://github.com/pyenv/pyenv) for this)
 - Make sure you have [pipenv](https://pypi.org/project/pipenv/) installed wherever you plan to run the bot.
-- Run `pipenv shell` and then pip install . from inside the root of the `pyracing` dir
-  
 - Once you have cloned the bot, from inside the root folder of the bot, run `pipenv install`
+  * Note - Make sure your pipenv install is running the correct python version. For example if you have 3.8.6 installed, you may want to do `pipenv install --python 3.8.6` just to be sure you don't accidentally use the system python
 - You will need to do a special installation for `wkhtmltopdf` which is part of what is used to generate images. 
   Follow the instructions from step 2 [here](https://pypi.org/project/imgkit/) for your platform.
 - You will also need to install the chromium chromedriver:
