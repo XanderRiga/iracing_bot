@@ -2,7 +2,6 @@ import logging
 import dotenv
 from pyracing import client as pyracing
 from discord.ext import commands, tasks
-from logdna import LogDNAHandler
 from .html_builder import *
 from .commands.update_user import UpdateUser
 from .commands.update import Update
@@ -30,11 +29,8 @@ import re
 
 dotenv.load_dotenv()
 
-logdna_key = os.getenv("LOGDNA_INGESTION_KEY")
-log = logging.getLogger('logdna')
+log = logging.getLogger('iracing_bot')
 log.setLevel(logging.DEBUG)
-handler = LogDNAHandler(logdna_key, {'hostname': os.getenv("LOG_LOCATION")})
-log.addHandler(handler)
 
 options = {
     'api_key': os.getenv("DATADOG_API_KEY"),

@@ -5,16 +5,12 @@ import os
 import sys
 import traceback
 import logging
-from logdna import LogDNAHandler
 from tortoise import Tortoise
 from iracing_cog.db_helpers import generate_schemas
 
 dotenv.load_dotenv()
-logdna_key = os.getenv("LOGDNA_INGESTION_KEY")
-log = logging.getLogger('logdna')
+log = logging.getLogger('iracing_bot')
 log.setLevel(logging.DEBUG)
-handler = LogDNAHandler(logdna_key, {'hostname': os.getenv("LOG_LOCATION")})
-log.addHandler(handler)
 
 description = "iRacing Bot to compare yourself to your friends and keep up to date on weekly combos"
 
