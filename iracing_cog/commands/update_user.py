@@ -5,6 +5,7 @@ from ..errors.name_not_found import NameNotFound
 from ..db_helpers import *
 from tortoise import Tortoise
 import traceback
+from pyracing.exceptions.authentication_error import AuthenticationError
 
 
 class UpdateUser:
@@ -125,5 +126,9 @@ class UpdateUser:
         await get_or_create_license_for_driver(driver, chart_data.current(), category)
 
     def handle_exceptions(self, method_name, e):
+        # We want to short-circuit the whole update if we can't auth, instead of hammering the servers.
+        if type(e) is AuthenticationError:
+            raise e
+
         traceback.print_exc()
         self.log.warning(f'update failed in method {method_name}. Exception: {str(e)}')

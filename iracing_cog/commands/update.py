@@ -2,6 +2,7 @@ import time
 import asyncio
 from ..db_helpers import *
 import traceback
+from pyracing.exceptions.authentication_error import AuthenticationError
 
 
 class Update:
@@ -41,6 +42,11 @@ class Update:
             try:
                 await self.update_server_background(guild)
             except Exception as e:
+                # We want to short-circuit the whole update if we can't auth, instead of hammering the servers.
+                if type(e) is AuthenticationError:
+                    self.log.info('=============== Auto update for all servers'
+                                  'failed due to auth error =================')
+                    return
                 self.log.warning(f'Guild failed update: {guild.id} skipping')
 
         self.log.info('=============== Auto update for all servers took ' + str(
@@ -70,7 +76,11 @@ class Update:
         async for driver in guild.drivers:
             try:
                 await self.update_user.update_fields(driver)
-            except:
+            except Exception as e:
+                # We want to short-circuit the whole update if we can't auth, instead of hammering the servers.
+                if type(e) is AuthenticationError:
+                    raise e
+
                 self.log.warning(f'Driver failed update: {driver.id} skipping')
 
         finish_time = datetime.now()
